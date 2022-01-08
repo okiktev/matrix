@@ -1,0 +1,103 @@
+package com.delfin.matrix;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+class Line {
+
+	private List<Character> data = new ArrayList<Character>();
+	private int x;
+	private int y;
+	private float fontSize;
+	
+	
+	Line(int x, int y) {
+		fontSize = new Random().nextInt(20) + 20f;
+		this.x = x;
+		this.y = y;
+		generateData();
+	}
+	
+	private void generateData() {
+		Random random = new Random();
+		data = Stream.generate(() -> {
+			Character ret = ' ';
+			while (ret == ' ' || ret == '\n' || ret == '\t' || ret == '\r') {
+				//return new Character((char) new Random().nextInt());
+				ret = new Character((char) random.nextInt(1000));
+				//new Random().nextInt(bound)
+				// return '$';
+			}
+			return ret;
+			}).limit(random.nextInt(25)).collect(Collectors.toList());
+	}
+	
+	void paint(Graphics g) {
+		long speed = new Random().nextInt(70) + 30;
+		
+        int offset = 0;
+        for (Character c : data) {
+        	synchronized (g) {
+                //String text = "" + new Date().getTime();
+            	String ch = new String(new char[] {c});
+            	
+//                g.setFont(g.getFont().deriveFont(new Random().nextFloat()));
+                g.setFont(g.getFont().deriveFont(fontSize));
+
+                Rectangle2D b = g.getFontMetrics().getStringBounds(ch, g);
+
+                Rectangle2D bounds = new Rectangle2D.Double(x, y + offset, b.getWidth(), b.getHeight());
+                
+                g.setClip(bounds);
+                //g.drawLine(0, 0, (int) bounds.getWidth(), (int) bounds.getHeight());
+                offset += (int) bounds.getHeight();
+                g.drawString(ch, x, y + offset);
+//                   g.drawString(ch, 0, 100);
+                System.out.print(ch);
+			}
+
+            Utils.delay(speed);
+        }
+        System.out.println();
+	}
+
+	public void prePaint(Graphics g) {
+        int offset = 0;
+        for (Character c : data) {
+        	synchronized (g) {
+                //String text = "" + new Date().getTime();
+            	String ch = new String(new char[] {c});
+            	
+//                g.setFont(g.getFont().deriveFont(new Random().nextFloat()));
+            	Font f = g.getFont().deriveFont(fontSize);
+                g.setFont(f);
+                // g.setColor(Color.GRAY);
+
+                Rectangle2D b = g.getFontMetrics().getStringBounds(ch, g);
+
+                Rectangle2D bounds = new Rectangle2D.Double(x, y + offset, b.getWidth(), b.getHeight());
+                
+                g.setClip(bounds);
+                //g.drawLine(0, 0, (int) bounds.getWidth(), (int) bounds.getHeight());
+                offset += (int) bounds.getHeight();
+                g.drawString(ch, x, y + offset);
+//                   g.drawString(ch, 0, 100);
+                // System.out.print(ch);
+			}
+
+            // Utils.delay(70);
+        }
+        // System.out.println();
+	}
+	
+	
+
+}
