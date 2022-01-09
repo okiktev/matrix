@@ -2,7 +2,7 @@
 
 <p>Simulates matrix code</p> 
 
-<img src="https://github.com/okiktev/matrix/matrix.png">
+<img src="https://raw.githubusercontent.com/okiktev/matrix/main/matrix.png">
 
 
 ## to run matrix
