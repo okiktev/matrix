@@ -2,17 +2,27 @@ package com.delfin.matrix;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 class Settings {
 	static String fname = "jpn_boot";
 
 	static {
+		InputStream in = null;
 		try {
+			in = Settings.class.getClassLoader().getResourceAsStream("fonts/" + fname + ".ttf");
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts", fname + ".ttf")));
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, in));
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ex) {
+					ex.printStackTrace(System.err);
+				}
+			}
 		}
 	}
 
