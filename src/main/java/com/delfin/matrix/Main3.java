@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -14,12 +13,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 
-public class Main extends Frame {
+public class Main3 extends JFrame {
 
 	private static volatile boolean isClosed = false;
 	
@@ -27,10 +29,11 @@ public class Main extends Frame {
 
 	private static volatile boolean isRepainted = false;
 
-	static Component c = new Component() {
+	static JComponent c = new JComponent() {
+		
 		@Override
-		public void paint(Graphics g) {
-			// super.paint(g);
+		protected void paintComponent(Graphics g) {
+			super.paint(g);
 			System.out.println("$$ executed");
 			isRepainted  = true;
 			
@@ -53,11 +56,7 @@ public class Main extends Frame {
 	private static int matrixDeep = 10;
 	
 	public static void main(String argv[]) throws InterruptedException, ExecutionException {
-		c.setBackground(Color.BLACK);
-		
-		
-		
-		Main window = new Main();
+		Main3 window = new Main3();
 		window.setVisible(true);
 		doRepaint = true;
 		ExecutorService executor = Executors.newCachedThreadPool();
@@ -84,17 +83,17 @@ public class Main extends Frame {
 //			g2d.setColor(Color.WHITE);
 			
 			// Font f = Font.getFont(Font.SERIF);
-			Font f = new Font(Settings.FONT_NAME, Font.BOLD, 40);
+			Font f = new Font(Font.MONOSPACED, Font.PLAIN, 40);
 
 			g.setFont(f);
 
 			// Graphics2D g2d = (Graphics2D) g.create();
-			//  Graphics g2 = g;
+			
 			
             
                 Image img =  c.createImage(dim.width, dim.height);   
                 Graphics g2 = img.getGraphics();      
-                g2.setColor(Color.BLACK);
+                g2.setColor(Color.white);
                 g2.fillRect(0, 0, dim.width, dim.height) ;                           
                 g2.setFont(f);
             /////////////////////
@@ -109,28 +108,23 @@ public class Main extends Frame {
 //				if (i == 0 && matrix.size() == matrixDeep + 1) {
 //					g.setColor(Color.WHITE);
 //				} else {
-					//int gradient = (256 / matrix.size()) * ((matrix.size()) - (i +1)) + 1;
-					int gradient = (256 / matrix.size()) * ((i + 1)) + 1;
-					if (gradient > 200) {
-						gradient = 200;
-					}
+					int gradient = (256 / matrix.size()) * ((matrix.size()) - (i +1)) + 1;
+//					int gradient = (256 / matrix.size()) * ((i)) + 1;
 					System.out.println("gradient " + gradient);
-					g2.setColor(new Color(0, gradient, 0));
+					g2.setColor(new Color(gradient, gradient, gradient));
 //				}
 				matrix.get(i).stream().forEach(l -> {
 					l.prePaint(g2);
 //					int u = 9;
 				});
 			}
-//			g2.drawLine(10, 10, 1000, 10);
 			g.drawImage(img, 0, 0, c);
-			// g2.dispose();
 			
 			
 //			List<Line> lines = generateLines(dim);
 			List<Line> lines = future.get();
 
-			g.setColor(new Color(0, 255, 0));
+			g.setColor(Color.BLACK);
 
 
 			try {
@@ -145,15 +139,12 @@ public class Main extends Frame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-//			g.drawLine(10, 10, 1000, 100);
 
-			
 			// executor.awaitTermination(500, TimeUnit.MILLISECONDS);
 			if (matrix.size() > matrixDeep) {
 				matrix.removeFirst();
 			}
-			// System.out.println("$$$$$$$$$$$ size " + matrix.size());
+			System.out.println("$$$$$$$$$$$ size " + matrix.size());
 			matrix.add(lines);
 			
 			// g2d.dispose();
@@ -165,8 +156,6 @@ public class Main extends Frame {
 	}
 
 	private static List<Line> generateLines(Dimension dim) {
-		long start = System.currentTimeMillis();
-		
 		int xLimit = dim.width;
 		int yLimit = 500;
 
@@ -187,13 +176,10 @@ public class Main extends Frame {
 		lines.add(new Line(random.nextInt(xLimit), random.nextInt(yLimit)));
 		lines.add(new Line(random.nextInt(xLimit), random.nextInt(yLimit)));
 		lines.add(new Line(random.nextInt(xLimit), random.nextInt(yLimit)));
-		
-		System.out.println("Generated " + (System.currentTimeMillis() - start) + "ms");
-		
 		return lines;
 	}
 
-	Main() {
+	Main3() {
 		// c.setFont(Font.getFont("Times New Roman"));
 		add(c);
 
