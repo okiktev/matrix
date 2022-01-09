@@ -2,38 +2,40 @@ package com.delfin.matrix;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.io.File;
-import java.util.Arrays;
 
 class Settings {
 	static String fname = "jpn_boot";
-//	static String fname = "kor_boot";
-//	static String fname = "constan";
-	// static String fname = "camriab";
+
 	static {
 		try {
-		     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		     ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts", fname + ".ttf")));
-		     //ge.preferLocaleFonts();
-		     
-//		     System.out.println(new Font("jpn_boot", Font.BOLD, 10));
-		     
-		     //System.out.println(Font.getFont("jpn_boot"));
-		     
-//		     String[] fs = Toolkit.getDefaultToolkit().getFontList();
-//		     Arrays.stream(fs).forEach(System.out::println);
-		     
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("fonts", fname + ".ttf")));
 		} catch (Exception e) {
-		     //Handle exception
+			e.printStackTrace(System.err);
 		}
 	}
-	
-// 	String FONT_NAME = Font.MONOSPACED;
-//	String FONT_NAME = Font.SERIF;
-//	String FONT_NAME = Font.SANS_SERIF;
-//	String FONT_NAME = Font.DIALOG;
-//	 static String FONT_NAME = Font.DIALOG_INPUT;
+
 	static String FONT_NAME = fname;
 	
+	static int[] FONT_SIZE_RANGE = {30, 30};
+	static int[] SYMBOLS_IN_LINE_RANGE = {5, 25};
+	static int[] SYMBOLS_SPEED_RANGE = {30, 100};
+
+	static int MATRIX_DEEP = 10;
+
+	static Position TOP_POSITION = new Position(5, new int[] { -10, -10 });
+	static Position MID_POSITION = new Position(3, new int[] { 20, 50 });
+	static Position BOT_POSITION = new Position(6, new int[] { 0, 500 });
+
+	static class Position {
+		int lineNumbers;
+		int[] range;
+
+		Position(int lineNumbers, int[] range) {
+			this.lineNumbers = lineNumbers;
+			this.range = range;
+		}
+	}
+
 }
