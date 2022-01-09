@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.delfin.matrix</groupId>
 	<artifactId>matrix</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1.1</version>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -25,6 +25,46 @@
 					</archive>
 				</configuration>
 			</plugin>
+			
+			
+			<plugin>
+          <groupId>com.akathist.maven.plugins.launch4j</groupId>
+          <artifactId>launch4j-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>l4j-clui</id>
+              <phase>package</phase>
+              <goals><goal>launch4j</goal></goals>
+              <configuration>
+                <headerType>gui</headerType>
+                <outfile>artifact/matrix.exe</outfile>
+                <jar>target/matrix-${version}.jar</jar>
+                <errTitle>encc</errTitle>
+                <classPath>
+                  <mainClass>com.delfin.matrix.Main</mainClass>
+                  <addDependencies>true</addDependencies>
+                  <preCp>anything</preCp>
+                </classPath>
+                <icon>src/main/resources/icons/matrix.ico</icon>
+                <jre>
+                  <minVersion>1.8</minVersion>
+                </jre>
+                <versionInfo>
+                  <fileVersion>${version}</fileVersion>
+                  <txtFileVersion>${version}</txtFileVersion>
+                  <fileDescription>Matrix screensaver https://github.com/okiktiev/matrix</fileDescription>
+                  <copyright>Copyright &#xa9; 2022 delfin. All rights reserved.</copyright>
+                  <productVersion>${version}</productVersion>
+                  <txtProductVersion>${version}</txtProductVersion>
+                  <productName>Matrix screensaver</productName>
+                  <internalName>Matrix screensaver</internalName>
+                  <originalFilename>matrix.exe</originalFilename>
+                </versionInfo>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+			
 		</plugins>
 	</build>
 
