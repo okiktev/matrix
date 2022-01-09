@@ -6,6 +6,7 @@ bin/
 build/
 target/
 lib/
+src/**/Test*java
 
 
 # Windows image file caches
