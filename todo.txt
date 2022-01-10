@@ -1,4 +1,6 @@
-released 0.0.1.1 .......................... 09Jan20222 
+released 0.0.1.1 .......................... 09Jan2022 
+imp increase chars ...done................. 10Jan2022
+
 
 imp avoid tick-tack raining
 imp settings
@@ -6,4 +8,3 @@ imp system tray
 imp white symbols
 imp matrix has you screen
 imp find alternative font
-imp increased chars
