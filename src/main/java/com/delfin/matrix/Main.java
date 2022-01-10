@@ -7,8 +7,10 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,7 +121,14 @@ public class Main extends Frame {
 			}
 		});
 
-		setMinimumSize(new Dimension(1800, 700));
+		URL u = Main.class.getClassLoader().getResource("icons/matrix.png");
+		Image icon = Toolkit.getDefaultToolkit().getImage(u);
+		setIconImage(icon);
+
+		setTitle("matrix");
+
+		setExtendedState(MAXIMIZED_BOTH);
+		
 		pack();
 	}
 
