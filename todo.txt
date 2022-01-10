@@ -1,7 +1,7 @@
 released 0.0.1.1 .......................... 09Jan2022 
 imp increase chars ...done................. 09Jan2022
 imp white symbols ...done.................. 09Jan2022
-
+released 1.0.0.1 .......................... 10Jan2022 
 
 imp avoid tick-tack raining
 imp settings
