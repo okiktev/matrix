@@ -1,5 +1,6 @@
 package com.delfin.matrix;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -36,12 +37,23 @@ class Line {
 	void paint(Graphics g) {
 		long speed = Utils.getRandomFrom(Settings.SYMBOLS_SPEED_RANGE);
 		int offset = 0;
-		for (Symbol s : data) {
+		for (int i = 0; i < data.size(); ++i) {
 			synchronized (g) {
 				g.setFont(font);
-				String ch = new String(Character.toChars(s.ch));
+				if (i != 0) {
+					// redraw previous
+					Symbol prev = data.get(i - 1);
+					g.setColor(new Color(0, 255, 0));
+					String ch = new String(Character.toChars(prev.ch));
+					g.drawString(ch, x, y + prev.offset);
+					if (i == data.size() - 1) {
+						continue;
+					}
+				}
+				g.setColor(Color.WHITE);
+				String ch = new String(Character.toChars(data.get(i).ch));
 				offset += (int) g.getFontMetrics().getStringBounds(ch, g).getHeight();
-				s.offset = offset;
+				data.get(i).offset = offset;
 				g.drawString(ch, x, y + offset);
 			}
 			Utils.delay(speed);

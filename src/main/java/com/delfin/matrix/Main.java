@@ -71,8 +71,8 @@ public class Main extends Frame {
 
 		for (int i = 0; i < matrix.size(); ++i) {
 			int gradient = (256 / matrix.size()) * (i + 1) + 1;
-			if (gradient > 200) {
-				gradient = 200;
+			if (gradient > 255) {
+				gradient = 250;
 			}
 			g2.setColor(new Color(0, gradient, 0));
 			matrix.get(i).stream().forEach(l -> l.prePaint(g2));
@@ -89,7 +89,7 @@ public class Main extends Frame {
 				return null;
 			}
 		}).collect(Collectors.toList()));
-
+		
 		if (matrix.size() > Settings.MATRIX_DEEP) {
 			matrix.removeFirst();
 		}
