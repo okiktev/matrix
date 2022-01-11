@@ -29,8 +29,13 @@ class Settings {
 	static String FONT_NAME = fname;
 	
 	static int[] FONT_SIZE_RANGE = {30, 30};
-	static int[] SYMBOLS_IN_LINE_RANGE = {5, 25};
-	static int[] SYMBOLS_SPEED_RANGE = {30, 100};
+	static int[] SYMBOLS_IN_LINE_RANGE = {10, 25};
+	static int[] SYMBOLS_RUN_SPEED_RANGE = {110, 170};
+//	static int[] SYMBOLS_RUN_SPEED_RANGE = {500, 750};
+//	static int[] SYMBOLS_WAIT_SPEED_RANGE = {150, 250};
+	static int[] SYMBOLS_WAIT_SPEED_RANGE = {500, 750};
+
+	static long DRAW_BIT = 70;
 
 	static int MATRIX_DEEP = 10;
 
