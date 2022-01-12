@@ -40,51 +40,30 @@ class Line {
 		generateData();
 	}
 
-	static final int[] GRADIENT_RANGE = new int[] {0, MATRIX_DEEP};
-	
-	
+	static final int[] GRADIENT_RANGE = new int[] { 0, MATRIX_DEEP };
+
 	private void generateData() {
 		Random random = new Random();
 		data = Stream.generate(() -> CHARS.get(random.nextInt(CHARS.size())))
-				.limit(getRandomFrom(SYMBOLS_IN_LINE_RANGE))
-				.map(Symbol::new)
-				.collect(Collectors.toList());
+				.limit(getRandomFrom(SYMBOLS_IN_LINE_RANGE)).map(Symbol::new).collect(Collectors.toList());
 	}
 
-
 	void prePaint(Graphics g) {
-		// draw fron of line
-		// synchronized (g) {
-long start = currentTimeMillis();
-		
 		g.setFont(font);
 
-			
 		for (int i = 0; i < drawnIndx; ++i) {
 			Symbol symbol = data.get(i);
 			g.setColor(symbol.color);
 			g.drawString(symbol.ch, x, y + symbol.offset);
 		}
-		
-		
-//System.out.println("drawn back " + (currentTimeMillis() - start));
-//start = currentTimeMillis();
-		
-		
+
 		if (drawnIndx < data.size()) {
 			paint(g);
 		}
-			if (currentTimeMillis() - redrawn < redrawnSpeed) {
-				return;
-			} 
-			
-			
-//System.out.println("drawn run " + (currentTimeMillis() - start));
-//start = currentTimeMillis();
+		if (currentTimeMillis() - redrawn < redrawnSpeed) {
+			return;
+		}
 
-			
-			
-			
 		for (int i = 0; i < drawnIndx; ++i) {
 			if (i == drawnIndx - 1 && drawnIndx < data.size()) {
 				g.setColor(Color.WHITE);
@@ -99,20 +78,18 @@ long start = currentTimeMillis();
 			g.drawString(symbol.ch, x, y + symbol.offset);
 		}
 		redrawn = currentTimeMillis();
-		
-//System.out.println("drawn change " + (currentTimeMillis() - start));
-		
-		
-//		System.out.println("$$$++++++++++++++++++++++++++++++++++++++++++++++++++");
-		
+
 	}
-	
+
+	boolean stopped() {
+		return drawnIndx >= data.size();
+	}
+
 	private void paint(Graphics g) {
-		if (currentTimeMillis() - drawn < drawnSpeed) {
+		if (stopped() || currentTimeMillis() - drawn < drawnSpeed) {
 			return;
 		}
 
-		// g.setFont(font);
 		if (drawnIndx != 0) {
 			// redraw previous
 			Symbol prevSymbol = data.get(drawnIndx - 1);
@@ -128,7 +105,7 @@ long start = currentTimeMillis();
 		int offset = (int) g.getFontMetrics().getStringBounds(ch, g).getHeight() * (drawnIndx + 1);
 		symbol.offset = offset;
 		g.drawString(ch, x, y + offset);
-		
+
 		++drawnIndx;
 		drawn = currentTimeMillis();
 
@@ -138,9 +115,9 @@ long start = currentTimeMillis();
 		public Color color;
 		String ch;
 		int offset;
+
 		Symbol(Character ch) {
 			this.ch = new String(Character.toChars(ch));
-//			this.ch = ch;
 		}
 	}
 

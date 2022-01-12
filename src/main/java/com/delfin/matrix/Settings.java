@@ -31,11 +31,9 @@ class Settings {
 	static int[] FONT_SIZE_RANGE = {30, 30};
 	static int[] SYMBOLS_IN_LINE_RANGE = {10, 25};
 	static int[] SYMBOLS_RUN_SPEED_RANGE = {110, 170};
-//	static int[] SYMBOLS_RUN_SPEED_RANGE = {500, 750};
-//	static int[] SYMBOLS_WAIT_SPEED_RANGE = {150, 250};
-	static int[] SYMBOLS_WAIT_SPEED_RANGE = {500, 750};
+	static int[] SYMBOLS_WAIT_SPEED_RANGE = {650, 900};
 
-	static long DRAW_BIT = 70;
+	static long DRAW_BIT = 40;
 
 	static int MATRIX_DEEP = 10;
 
