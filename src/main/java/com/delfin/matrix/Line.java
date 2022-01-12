@@ -24,12 +24,12 @@ class Line {
 	private int x;
 	private int y;
 	private Font font;
-	private long redrawn = currentTimeMillis();
-	private long redrawnSpeed;
-	private long drawn = currentTimeMillis();
-	private long drawnSpeed;
+	long redrawn = currentTimeMillis();
+	long redrawnSpeed;
+	long drawn = currentTimeMillis();
+	long drawnSpeed;
 
-	int drawnIndx = 0;
+	private int drawnIndx = 0;
 
 	Line(int x, int y) {
 		font = new Font(FONT_NAME, Font.BOLD, getRandomFrom(FONT_SIZE_RANGE));
