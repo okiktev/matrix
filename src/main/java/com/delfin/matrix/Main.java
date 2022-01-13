@@ -76,6 +76,8 @@ public class Main extends Frame {
 
 		long prevRedraw = System.currentTimeMillis();
 
+		int idxRedrawRange[] = {0, 2};
+		
 		while (!isClosed) {
 
 			if (matrix.size() <= 0) {
@@ -83,8 +85,13 @@ public class Main extends Frame {
 				matrix.addAll(lines);
 			}
 
+			int idxRedraw = Utils.getRandomFrom(idxRedrawRange);
+			
 			boolean redraw = false;
 			for (int i = 0; i < matrix.size(); ++i) {
+				if (idxRedraw % 2 == 0) {
+					continue;
+				}
 				Line line = matrix.get(i);
 
 				long now = System.currentTimeMillis();
@@ -103,6 +110,10 @@ public class Main extends Frame {
 //				g2.setColor(Color.BLACK);
 //				g2.fillRect(0, 0, dim.width, dim.height);
 				for (int i = 0; i < matrix.size(); ++i) {
+					if (idxRedraw % 2 == 0) {
+						continue;
+					}
+					
 					matrix.get(i).prePaint(g2);
 				}
 				g.drawImage(img, 0, 0, canvas);
@@ -116,7 +127,7 @@ public class Main extends Frame {
 		int xLimit = dim.width;
 		return (List<Line>) time(t -> {
 		}, () -> {
-			return Arrays.asList(new Position(55, new int[] { 20, 50 })).stream()
+			return Arrays.asList(new Position(70, new int[] { 20, 50 })).stream()
 //			return Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION).stream()
 					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range)).limit(p.lineNumbers)
 							.map(y -> new Line(random.nextInt(xLimit), y)))
