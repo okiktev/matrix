@@ -65,8 +65,14 @@ public class Main extends Frame {
 	private static void drawMatrix(ExecutorService executor) throws InterruptedException, ExecutionException {
 		Graphics g = canvas.getGraphics();
 		Dimension dim = canvas.getSize();
+
+		
 		Image img = canvas.createImage(dim.width, dim.height);
 		Graphics g2 = img.getGraphics();
+		
+		
+		g2.setColor(Color.BLACK);
+		g2.fillRect(0, 0, dim.width, dim.height);
 
 		long prevRedraw = System.currentTimeMillis();
 
@@ -83,19 +89,19 @@ public class Main extends Frame {
 
 				long now = System.currentTimeMillis();
 				if (now - line.redrawn > line.redrawnSpeed || (!line.stopped() && now - line.drawn > line.drawnSpeed)) {
-					System.out.println((now - line.redrawn) + "_ " + line.redrawnSpeed + ":" + (now - line.drawn) + "_"
-							+ line.drawnSpeed);
+//					System.out.println((now - line.redrawn) + "_ " + line.redrawnSpeed + ":" + (now - line.drawn) + "_"
+//							+ line.drawnSpeed);
 
 					redraw = true;
 					break;
 				}
 			}
 			if (redraw) {
-				System.out.println("$ " + (System.currentTimeMillis() - prevRedraw));
+//				System.out.println("$ " + (System.currentTimeMillis() - prevRedraw));
 				prevRedraw = System.currentTimeMillis();
 
-				g2.setColor(Color.BLACK);
-				g2.fillRect(0, 0, dim.width, dim.height);
+//				g2.setColor(Color.BLACK);
+//				g2.fillRect(0, 0, dim.width, dim.height);
 				for (int i = 0; i < matrix.size(); ++i) {
 					matrix.get(i).prePaint(g2);
 				}
@@ -111,6 +117,7 @@ public class Main extends Frame {
 		return (List<Line>) time(t -> {
 		}, () -> {
 			return Arrays.asList(new Position(55, new int[] { 20, 50 })).stream()
+//			return Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION).stream()
 					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range)).limit(p.lineNumbers)
 							.map(y -> new Line(random.nextInt(xLimit), y)))
 					.collect(Collectors.toList());

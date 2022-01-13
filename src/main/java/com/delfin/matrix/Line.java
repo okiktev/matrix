@@ -50,12 +50,12 @@ class Line {
 
 	void prePaint(Graphics g) {
 		g.setFont(font);
-
-		for (int i = 0; i < drawnIndx; ++i) {
-			Symbol symbol = data.get(i);
-			g.setColor(symbol.color);
-			g.drawString(symbol.ch, x, y + symbol.offset);
-		}
+//		System.out.println("start paint");
+//		for (int i = 0; i < drawnIndx; ++i) {
+//			Symbol symbol = data.get(i);
+//			g.setColor(symbol.color);
+//			g.drawString(symbol.ch, x, y + symbol.offset);
+//		}
 
 		if (drawnIndx < data.size()) {
 			paint(g);
@@ -63,7 +63,7 @@ class Line {
 		if (currentTimeMillis() - redrawn < redrawnSpeed) {
 			return;
 		}
-
+//		System.out.println("do paint");
 		for (int i = 0; i < drawnIndx; ++i) {
 			if (i == drawnIndx - 1 && drawnIndx < data.size()) {
 				g.setColor(Color.WHITE);
