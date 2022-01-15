@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -55,7 +56,7 @@ public class Main extends Frame {
 			try {
 				drawMatrix(null);
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				e.printStackTrace(System.err);
 			}
 
 		});
@@ -81,18 +82,30 @@ public class Main extends Frame {
 		while (!isClosed) {
 
 			if (matrix.size() <= 0) {
-				List<Line> lines = generateLines(dim);
+				List<Line> lines = generateLines(dim, -1);
 				matrix.addAll(lines);
+			} else {
+				int count = 0;
+				for (Iterator<Line> it = matrix.iterator(); it.hasNext();) {
+					Line line = it.next();
+					if (line.isOutOfScreen(dim)) {
+						it.remove();
+						++count;
+					}
+				}
+				matrix.addAll(generateLines(dim, count));
 			}
 
-			int idxRedraw = Utils.getRandomFrom(idxRedrawRange);
+			int idxRedraw = Utils.getRandomFrom(idxRedrawRange) + 1;
 			
 			boolean redraw = false;
+			// System.out.println("$ sdfsdaf" + System.currentTimeMillis());
 			for (int i = 0; i < matrix.size(); ++i) {
-				if (idxRedraw % 2 == 0) {
-					continue;
-				}
 				Line line = matrix.get(i);
+//				// if (idxRedraw % 2 == 0) {
+//					if (line.stopped() && i % idxRedraw == 0) {
+//					continue;
+//				}
 
 				long now = System.currentTimeMillis();
 				if (now - line.redrawn > line.redrawnSpeed || (!line.stopped() && now - line.drawn > line.drawnSpeed)) {
@@ -104,17 +117,21 @@ public class Main extends Frame {
 				}
 			}
 			if (redraw) {
-//				System.out.println("$ " + (System.currentTimeMillis() - prevRedraw));
+				//System.out.println("$ " + (System.currentTimeMillis() - prevRedraw));
 				prevRedraw = System.currentTimeMillis();
 
 //				g2.setColor(Color.BLACK);
 //				g2.fillRect(0, 0, dim.width, dim.height);
+				
 				for (int i = 0; i < matrix.size(); ++i) {
-					if (idxRedraw % 2 == 0) {
-						continue;
-					}
+					Line line = matrix.get(i);
+//					if (idxRedraw % 2 == 0) {
+//						if (line.stopped() && i % idxRedraw == 0) {
+//						// System.out.println("redraw 2 " );
+//						continue;
+//					}
 					
-					matrix.get(i).prePaint(g2);
+					line.draw(g2);
 				}
 				g.drawImage(img, 0, 0, canvas);
 			}
@@ -123,11 +140,30 @@ public class Main extends Frame {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<Line> generateLines(Dimension dim) {
+	private static List<Line> generateLines(Dimension dim, int lines) {
 		int xLimit = dim.width;
+		List<Position> positions = new ArrayList<>();
+		if (lines == -1) {
+			positions.addAll(Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION));
+		} else {
+			if (lines == 1) {
+				positions.addAll(Arrays.asList(new Position(1, Settings.TOP_POSITION.range)));
+			} else if (lines == 2) {
+				positions.addAll(Arrays.asList(new Position(1, Settings.TOP_POSITION.range)
+						, new Position(1, Settings.MID_POSITION.range)));
+			} else if (lines >= 3) {
+				positions.addAll(Arrays.asList(new Position(lines / 3, Settings.TOP_POSITION.range)
+						, new Position(lines / 3, Settings.MID_POSITION.range)
+						, new Position(lines / 3, Settings.BOT_POSITION.range)));
+			}
+
+		}
+		
 		return (List<Line>) time(t -> {
 		}, () -> {
-			return Arrays.asList(new Position(70, new int[] { 20, 50 })).stream()
+			return positions.stream()
+//					return Arrays.asList(new Position(70, new int[] { 20, 50 })).stream()
+			//return Arrays.asList(new Position(1, new int[] { 20, 50 })).stream()
 //			return Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION).stream()
 					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range)).limit(p.lineNumbers)
 							.map(y -> new Line(random.nextInt(xLimit), y)))

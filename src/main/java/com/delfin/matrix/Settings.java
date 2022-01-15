@@ -33,13 +33,19 @@ class Settings {
 	static int[] SYMBOLS_RUN_SPEED_RANGE = {110, 170};
 	static int[] SYMBOLS_WAIT_SPEED_RANGE = {650, 900};
 
-	static long DRAW_BIT = 40;
+	static int[] WAIT_TICKS_RANGE = {5, 25};
+	static int[] MOVE_SPEED_RANGE = {7, 25};
+
+	static long DRAW_BIT = 30;
 
 	static int MATRIX_DEEP = 10;
 
-	static Position TOP_POSITION = new Position(5, new int[] { -10, -10 });
-	static Position MID_POSITION = new Position(3, new int[] { 20, 50 });
-	static Position BOT_POSITION = new Position(6, new int[] { 0, 500 });
+//	static Position TOP_POSITION = new Position(5, new int[] { -10, -10 });
+//	static Position MID_POSITION = new Position(3, new int[] { 20, 50 });
+//	static Position BOT_POSITION = new Position(6, new int[] { 0, 500 });
+	static Position TOP_POSITION = new Position(25, new int[] { -10, -10 });
+	static Position MID_POSITION = new Position(25, new int[] { 20, 50 });
+	static Position BOT_POSITION = new Position(20, new int[] { 0, 500 });
 
 	static class Position {
 		int lineNumbers;
