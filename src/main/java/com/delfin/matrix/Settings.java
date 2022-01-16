@@ -43,9 +43,9 @@ class Settings {
 //	static Position TOP_POSITION = new Position(5, new int[] { -10, -10 });
 //	static Position MID_POSITION = new Position(3, new int[] { 20, 50 });
 //	static Position BOT_POSITION = new Position(6, new int[] { 0, 500 });
-	static Position TOP_POSITION = new Position(25, new int[] { -10, -10 });
-	static Position MID_POSITION = new Position(25, new int[] { 20, 50 });
-	static Position BOT_POSITION = new Position(20, new int[] { 0, 500 });
+	static Position TOP_POSITION = new Position(10, new int[] { -10, -10 });
+	static Position MID_POSITION = new Position(40, new int[] { 20, 50 });
+	static Position BOT_POSITION = new Position(25, new int[] { 0, 500 });
 
 	static class Position {
 		int lineNumbers;

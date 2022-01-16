@@ -23,7 +23,7 @@ class Line {
 	private static final int[] GRADIENT_RANGE = new int[] { 0, MATRIX_DEEP };
 
 	private List<Symbol> data = new ArrayList<>();
-	private int x;
+	int x;
 	private int y;
 	private Font font;
 	long redrawn = currentTimeMillis();

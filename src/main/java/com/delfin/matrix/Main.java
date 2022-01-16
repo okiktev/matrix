@@ -1,9 +1,10 @@
 package com.delfin.matrix;
 
-import static com.delfin.matrix.Settings.DRAW_BIT;
+import static com.delfin.matrix.Settings.*;
 import static com.delfin.matrix.Utils.delay;
 import static com.delfin.matrix.Utils.getRandomFrom;
 import static com.delfin.matrix.Utils.time;
+import static java.util.Arrays.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -16,7 +17,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -66,19 +66,13 @@ public class Main extends Frame {
 	private static void drawMatrix(ExecutorService executor) throws InterruptedException, ExecutionException {
 		Graphics g = canvas.getGraphics();
 		Dimension dim = canvas.getSize();
-
 		
 		Image img = canvas.createImage(dim.width, dim.height);
 		Graphics g2 = img.getGraphics();
 		
-		
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, dim.width, dim.height);
 
-		long prevRedraw = System.currentTimeMillis();
-
-		int idxRedrawRange[] = {0, 2};
-		
 		while (!isClosed) {
 
 			if (matrix.size() <= 0) {
@@ -89,86 +83,112 @@ public class Main extends Frame {
 				for (Iterator<Line> it = matrix.iterator(); it.hasNext();) {
 					Line line = it.next();
 					if (line.isOutOfScreen(dim)) {
+						xAllocations.set(line.x, -1);
 						it.remove();
 						++count;
 					}
 				}
 				matrix.addAll(generateLines(dim, count));
 			}
+//			System.out.println(xAllocations);
 
-			int idxRedraw = Utils.getRandomFrom(idxRedrawRange) + 1;
-			
 			boolean redraw = false;
-			// System.out.println("$ sdfsdaf" + System.currentTimeMillis());
 			for (int i = 0; i < matrix.size(); ++i) {
 				Line line = matrix.get(i);
-//				// if (idxRedraw % 2 == 0) {
-//					if (line.stopped() && i % idxRedraw == 0) {
-//					continue;
-//				}
 
 				long now = System.currentTimeMillis();
 				if (now - line.redrawn > line.redrawnSpeed || (!line.stopped() && now - line.drawn > line.drawnSpeed)) {
-//					System.out.println((now - line.redrawn) + "_ " + line.redrawnSpeed + ":" + (now - line.drawn) + "_"
-//							+ line.drawnSpeed);
-
 					redraw = true;
 					break;
 				}
 			}
 			if (redraw) {
-				//System.out.println("$ " + (System.currentTimeMillis() - prevRedraw));
-				prevRedraw = System.currentTimeMillis();
-
-//				g2.setColor(Color.BLACK);
-//				g2.fillRect(0, 0, dim.width, dim.height);
 				
 				for (int i = 0; i < matrix.size(); ++i) {
 					Line line = matrix.get(i);
-//					if (idxRedraw % 2 == 0) {
-//						if (line.stopped() && i % idxRedraw == 0) {
-//						// System.out.println("redraw 2 " );
-//						continue;
-//					}
 					
 					line.draw(g2);
 				}
 				g.drawImage(img, 0, 0, canvas);
 			}
+			//System.out.println("$$ bit " + System.currentTimeMillis());
 			delay(DRAW_BIT);
 		}
+		// System.out.println("$$ closed " + System.currentTimeMillis());
 	}
 
+	
+	static List<Integer> xAllocations = new ArrayList<>();
+	
 	@SuppressWarnings("unchecked")
 	private static List<Line> generateLines(Dimension dim, int lines) {
 		int xLimit = dim.width;
+		if (xAllocations.isEmpty()) {
+			xAllocations = new ArrayList<>(xLimit);
+			for (int i = 0; i < xLimit; ++i) {
+				xAllocations.add(-1);
+			}
+		}
 		List<Position> positions = new ArrayList<>();
 		if (lines == -1) {
-			positions.addAll(Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION));
+			positions.addAll(asList(TOP_POSITION, MID_POSITION, BOT_POSITION));
 		} else {
 			if (lines == 1) {
-				positions.addAll(Arrays.asList(new Position(1, Settings.TOP_POSITION.range)));
+				positions.addAll(asList(new Position(1, TOP_POSITION.range)));
 			} else if (lines == 2) {
-				positions.addAll(Arrays.asList(new Position(1, Settings.TOP_POSITION.range)
-						, new Position(1, Settings.MID_POSITION.range)));
+				positions.addAll(asList(new Position(1, TOP_POSITION.range)
+						, new Position(1, MID_POSITION.range)));
 			} else if (lines >= 3) {
-				positions.addAll(Arrays.asList(new Position(lines / 3, Settings.TOP_POSITION.range)
-						, new Position(lines / 3, Settings.MID_POSITION.range)
-						, new Position(lines / 3, Settings.BOT_POSITION.range)));
+				positions.addAll(asList(new Position(lines / 3, TOP_POSITION.range)
+						, new Position(lines / 3, MID_POSITION.range)
+						, new Position(lines / 3, BOT_POSITION.range)));
 			}
 
 		}
 		
-		return (List<Line>) time(t -> {
-		}, () -> {
+		return (List<Line>) time(t -> {}, () -> {
 			return positions.stream()
-//					return Arrays.asList(new Position(70, new int[] { 20, 50 })).stream()
-			//return Arrays.asList(new Position(1, new int[] { 20, 50 })).stream()
-//			return Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION).stream()
-					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range)).limit(p.lineNumbers)
-							.map(y -> new Line(random.nextInt(xLimit), y)))
+					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range))
+							.limit(p.lineNumbers)
+							.map(y -> {
+								int x = random.nextInt(xLimit);
+								x = allocate(x, xLimit, true);
+								xAllocations.set(x, x);
+								return new Line(x, y);
+							}))
 					.collect(Collectors.toList());
 		});
+	}
+
+	private static int allocate(int x, int xLimit, boolean direction) {
+		if (x > xLimit || x < 0) {
+			return -2;
+		}
+		boolean free = true;
+		for (int i = x - 10; i < x + 10; ++i) {
+			if (i < 0 || i >= xAllocations.size()) {
+				continue;
+			}
+			int j = xAllocations.get(i);
+			if (j != -1) {
+				free = false;
+				break;
+			}
+		}
+		if (free) {
+			return x;
+		}
+		if (direction) {
+			int a = allocate(x + 20, xLimit, true);
+			if (a != -2) {
+				return a;
+			}
+		}
+		int a = allocate(x - 20, xLimit, false);
+		if (a != -2) {
+			return a;
+		}
+		return x;
 	}
 
 	Main() {
@@ -190,10 +210,10 @@ public class Main extends Frame {
 		setTitle("matrix");
 
 		setExtendedState(MAXIMIZED_BOTH);
+		setPreferredSize(new Dimension(500, 500));
 
 		pack();
 
-		System.out.println(getSize());
 	}
 
 }
