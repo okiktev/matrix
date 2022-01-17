@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class Chars {
+public class Chars {
 
 	private static List<Character> DIGITS;
 	private static List<Character> JAPANESE;
@@ -55,7 +55,7 @@ class Chars {
 		return USSR_SIGN;
 	}
 
-	static List<Character> getAll() {
+	public static List<Character> getAll() {
 		List<Character> res = new ArrayList<>(getDigits());
 		res.addAll(getJapanese());
 		res.addAll(getLatin());

@@ -5,8 +5,9 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.InputStream;
 
-class Settings {
-	static String fname = "jpn_boot";
+public class Settings {
+
+	private static String fname = "jpn_boot";
 
 	static {
 		InputStream in = null;
@@ -26,32 +27,29 @@ class Settings {
 		}
 	}
 
-	static String FONT_NAME = fname;
+	public static String FONT_NAME = fname;
 	
-	static int[] FONT_SIZE_RANGE = {30, 30};
-	static int[] SYMBOLS_IN_LINE_RANGE = {10, 25};
-	static int[] SYMBOLS_RUN_SPEED_RANGE = {110, 170};
-	static int[] SYMBOLS_WAIT_SPEED_RANGE = {650, 900};
+	public static int[] FONT_SIZE_RANGE = {30, 30};
+	public static int[] SYMBOLS_IN_LINE_RANGE = {10, 25};
+	public static int[] SYMBOLS_RUN_SPEED_RANGE = {110, 170};
+	public static int[] SYMBOLS_WAIT_SPEED_RANGE = {650, 900};
 
-	static int[] WAIT_TICKS_RANGE = {5, 25};
-	static int[] MOVE_SPEED_RANGE = {7, 25};
+	public static int[] WAIT_TICKS_RANGE = {5, 25};
+	public static int[] MOVE_SPEED_RANGE = {7, 25};
 
-	static long DRAW_BIT = 30;
+	public static long DRAW_BIT = 30;
 
-	static int MATRIX_DEEP = 10;
+	public static int MATRIX_DEEP = 10;
 
-//	static Position TOP_POSITION = new Position(5, new int[] { -10, -10 });
-//	static Position MID_POSITION = new Position(3, new int[] { 20, 50 });
-//	static Position BOT_POSITION = new Position(6, new int[] { 0, 500 });
-	static Position TOP_POSITION = new Position(10, new int[] { -10, -10 });
-	static Position MID_POSITION = new Position(40, new int[] { 20, 50 });
-	static Position BOT_POSITION = new Position(25, new int[] { 0, 500 });
+	public static Position TOP_POSITION = new Position(10, new int[] { -10, -10 });
+	public static Position MID_POSITION = new Position(40, new int[] { 20, 50 });
+	public static Position BOT_POSITION = new Position(25, new int[] { 0, 500 });
 
-	static class Position {
-		int lineNumbers;
-		int[] range;
+	public static class Position {
+		public int lineNumbers;
+		public int[] range;
 
-		Position(int lineNumbers, int[] range) {
+		public Position(int lineNumbers, int[] range) {
 			this.lineNumbers = lineNumbers;
 			this.range = range;
 		}

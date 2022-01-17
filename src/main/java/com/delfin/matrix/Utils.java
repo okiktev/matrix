@@ -4,15 +4,15 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-class Utils {
+public class Utils {
 
 	private static Random random = new Random();
 
-	static void delay() {
+	public static void delay() {
 		delay(1000);
 	}
 
-	static void delay(long millis) {
+	public static void delay(long millis) {
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
@@ -20,7 +20,7 @@ class Utils {
 		}
 	}
 
-	static Object time(Consumer<Long> logger, Supplier<?> executor) {
+	public static Object time(Consumer<Long> logger, Supplier<?> executor) {
 		long start = System.currentTimeMillis();
 		try {
 			return executor.get();
@@ -29,7 +29,7 @@ class Utils {
 		}
 	}
 
-	static int getRandomFrom(int[] range) {
+	public static int getRandomFrom(int[] range) {
 		if (range[0] == range[1]) {
 			return range[0];
 		} else {
