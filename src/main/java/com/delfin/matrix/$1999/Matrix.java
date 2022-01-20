@@ -62,7 +62,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 				}
 			}
 			if (count != 0) {
-				List<Line> lines = generateLines(dim, count);
+				List<Line> lines = generateLines(dim, count, g);
 				boolean doPair = getRandomFrom(PAIR_RANGE) % 3 == 0;
 				if (doPair) {
 					if (lines.size() == 1 && accumulator.isEmpty()) {
@@ -101,7 +101,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Line> generateLines(Dimension dim, int lines) {
+	private List<Line> generateLines(Dimension dim, int lines, Graphics g) {
 		int xLimit = dim.width;
 		if (xAllocations.isEmpty()) {
 			xAllocations = new ArrayList<>(xLimit);
@@ -130,44 +130,12 @@ public class Matrix implements com.delfin.matrix.Matrix {
 					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range))
 							.limit(p.lineNumbers)
 							.map(y -> {
-								int x = random.nextInt(xLimit);
-								x = allocate(x, xLimit, true);
-								if (x >= xAllocations.size()) {
-									x = xAllocations.size() - 1;
-								}
-								xAllocations.set(x, x);
-								return new Line(x, y);
+								Line line = new Line(random.nextInt(xLimit), y);
+								line.allocate(xAllocations, g);
+								return line;
 							}))
 					.collect(Collectors.toList());
 		});
-	}
-
-	private int allocate(int x, int xLimit, boolean direction) {
-		if (x > xLimit || x < 0) {
-			return -2;
-		}
-		boolean free = true;
-		for (int i = x - 10; i < x + 10; ++i) {
-			if (i < 0 || i >= xAllocations.size()) {
-				continue;
-			}
-			int j = xAllocations.get(i);
-			if (j != -1) {
-				free = false;
-				break;
-			}
-		}
-		if (free) {
-			return x;
-		}
-		if (direction) {
-			int a = allocate(x + 20, xLimit, true);
-			if (a != -2) {
-				return a;
-			}
-		}
-		int a = allocate(x - 20, xLimit, false);
-		return a != -2 ? a : x;
 	}
 
 	@Override

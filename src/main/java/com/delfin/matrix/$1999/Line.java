@@ -22,7 +22,7 @@ class Line {
 
 	static final List<Character> CHARS = Chars.getAll();
 	private static final Map<Integer, Color> GRADIENTS = new HashMap<>();
-	private static final int[] GRADIENT_RANGE = new int[] { 0, MATRIX_DEEP };
+	private static final int[] GRADIENT_RANGE = { 0, MATRIX_DEEP };
 
 	private List<Symbol> data = new ArrayList<>();
 	int x;
@@ -41,6 +41,7 @@ class Line {
 	private int moveSpeed;
 	private int moveSpeedIdx;
 	private boolean redrawnWhite;
+	private Integer lineWidth;
 
 	Line(int x, int y) {
 		font = new Font(FONT_NAME, Font.BOLD, getRandomFrom(FONT_SIZE_RANGE));
@@ -161,7 +162,7 @@ class Line {
 			return;
 		}
 		y = line.y;
-		x = line.x + 20;
+		x = (int) (line.x + 0.75 * lineWidth);
 		if (x >= maxX) {
 			x = maxX - 1;
 		}
@@ -196,6 +197,45 @@ class Line {
 			line.stopIndex = line.data.size();
 			return;
 		}
+	}
+
+	void allocate(List<Integer> xAllocations, Graphics g) {
+		if (lineWidth == null) {
+			lineWidth = (int) g.getFontMetrics(font).getStringBounds(data.get(0).ch, g).getWidth();
+		}
+		x = allocate(x, lineWidth, true, xAllocations);
+		if (x >= xAllocations.size()) {
+			x = xAllocations.size() - 1;
+		}
+		xAllocations.set(x, x);
+	}
+
+	private static int allocate(int x, int lineWidth, boolean direction, List<Integer> xAllocations) {
+		if (x > xAllocations.size() || x < 0) {
+			return -2;
+		}
+		boolean free = true;
+		for (int i = x - lineWidth/2; i < x + lineWidth/2; ++i) {
+			if (i < 0 || i >= xAllocations.size()) {
+				continue;
+			}
+			int j = xAllocations.get(i);
+			if (j != -1) {
+				free = false;
+				break;
+			}
+		}
+		if (free) {
+			return x;
+		}
+		if (direction) {
+			int a = allocate(x + lineWidth/2 + 1, lineWidth, true, xAllocations);
+			if (a != -2) {
+				return a;
+			}
+		}
+		int a = allocate(x - lineWidth/2 - 1, lineWidth, false, xAllocations);
+		return a != -2 ? a : x;
 	}
 
 	private static class Symbol {
