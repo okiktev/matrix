@@ -47,7 +47,7 @@ class Line {
 		redrawnSpeed = getRandomFrom(SYMBOLS_WAIT_SPEED_RANGE);
 		drawnSpeed = getRandomFrom(SYMBOLS_RUN_SPEED_RANGE);
 		waitLim = getRandomFrom(WAIT_TICKS_RANGE);
-		moveSpeed = getRandomFrom(MOVE_SPEED_RANGE);
+		moveSpeed = getRandomFrom(MOVE_LENGTH_RANGE);
 		this.x = x;
 		this.y = y;
 		generateData();
@@ -61,7 +61,6 @@ class Line {
 				.map(Symbol::new)
 				.collect(Collectors.toList());
 	}
-
 	
 	void draw(Graphics g) {
 		g.setFont(font);
@@ -155,6 +154,48 @@ class Line {
 
 	boolean isOutOfScreen(Dimension dim) {
 		return y > dim.height;
+	}
+
+	void pairTo(Line line, int maxX) {
+		if (line == null) {
+			return;
+		}
+		y = line.y;
+		x = line.x + 20;
+		if (x >= maxX) {
+			x = maxX - 1;
+		}
+		drawnSpeed = line.drawnSpeed;
+		redrawnSpeed = line.redrawnSpeed;
+		moveSpeed = line.moveSpeed;
+		waitLim = line.waitLim;
+
+		redrawn = line.redrawn;
+		drawn = line.drawn;
+
+		alignSize(line);
+	}
+
+	private void alignSize(Line line) {
+		if (data.size() == line.data.size()) {
+			return;
+		}
+		if (data.size() > line.data.size()) {
+			int diff = data.size() - line.data.size();
+			for (int i = 0; i < diff; ++i) {
+				data.remove(data.size() - 1);
+			}
+			stopIndex = data.size();
+			return;
+		}
+		if (data.size() < line.data.size()) {
+			int diff = line.data.size() - data.size();
+			for (int i = 0; i < diff; ++i) {
+				line.data.remove(line.data.size() - 1);
+			}
+			line.stopIndex = line.data.size();
+			return;
+		}
 	}
 
 	private static class Symbol {

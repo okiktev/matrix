@@ -4,6 +4,7 @@ import static com.delfin.matrix.Settings.BOT_POSITION;
 import static com.delfin.matrix.Settings.DRAW_BIT;
 import static com.delfin.matrix.Settings.MID_POSITION;
 import static com.delfin.matrix.Settings.TOP_POSITION;
+import static com.delfin.matrix.Settings.PAIR_RANGE;
 import static com.delfin.matrix.Utils.delay;
 import static com.delfin.matrix.Utils.getRandomFrom;
 import static com.delfin.matrix.Utils.time;
@@ -36,6 +37,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	@Override
 	public void draw(Component canvas) {
 		Graphics g = canvas.getGraphics();
+		
 		Dimension dim = canvas.getSize();
 		
 		Image img = canvas.createImage(dim.width, dim.height);
@@ -44,12 +46,12 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, dim.width, dim.height);
 
+		List<Line> accumulator = new ArrayList<>();
+		
 		while (!isDestroyed && !Thread.interrupted()) {
-			if (matrix.size() <= 0) {
-				List<Line> lines = generateLines(dim, -1);
-				matrix.addAll(lines);
-			} else {
-				int count = 0;
+			int count = -1;
+			if (matrix.size() > 0) {
+				count = 0;
 				for (Iterator<Line> it = matrix.iterator(); it.hasNext();) {
 					Line line = it.next();
 					if (line.isOutOfScreen(dim)) {
@@ -58,7 +60,23 @@ public class Matrix implements com.delfin.matrix.Matrix {
 						++count;
 					}
 				}
-				matrix.addAll(generateLines(dim, count));
+			}
+			if (count != 0) {
+				List<Line> lines = generateLines(dim, count);
+				boolean doPair = getRandomFrom(PAIR_RANGE) % 3 == 0;
+				if (doPair) {
+					if (lines.size() == 1 && accumulator.isEmpty()) {
+						accumulator.addAll(lines);
+						lines.clear();
+					} else {
+						lines.addAll(accumulator);
+						accumulator.clear();
+						xAllocations.set(lines.get(0).x, -1);
+						lines.get(0).pairTo(lines.get(1), dim.width);
+						xAllocations.set(lines.get(0).x, lines.get(0).x);
+					}
+				}
+				matrix.addAll(lines);
 			}
 
 			boolean redraw = false;
@@ -66,7 +84,8 @@ public class Matrix implements com.delfin.matrix.Matrix {
 				Line line = matrix.get(i);
 
 				long now = System.currentTimeMillis();
-				if (now - line.redrawn > line.redrawnSpeed || (!line.stopped() && now - line.drawn > line.drawnSpeed)) {
+				if (now - line.redrawn > line.redrawnSpeed || 
+						(!line.stopped() && now - line.drawn > line.drawnSpeed)) {
 					redraw = true;
 					break;
 				}
@@ -104,7 +123,6 @@ public class Matrix implements com.delfin.matrix.Matrix {
 						, new Position(lines / 3, MID_POSITION.range)
 						, new Position(lines / 3, BOT_POSITION.range)));
 			}
-
 		}
 
 		return (List<Line>) time(t -> {}, () -> {
