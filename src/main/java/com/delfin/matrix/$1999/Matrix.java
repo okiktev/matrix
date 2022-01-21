@@ -100,7 +100,6 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<Line> generateLines(Dimension dim, int lines, Graphics g) {
 		int xLimit = dim.width;
 		if (xAllocations.isEmpty()) {
@@ -125,7 +124,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 			}
 		}
 
-		return (List<Line>) time(t -> {}, () -> {
+		return time(t -> {}, () -> {
 			return positions.stream()
 					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range))
 							.limit(p.lineNumbers)

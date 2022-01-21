@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -13,10 +12,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.delfin.matrix.Utils;
+import static java.util.stream.Stream.generate;
+import static java.util.stream.Collectors.toList;
+import static java.util.Arrays.asList;
+import static com.delfin.matrix.Utils.*;
+import static com.delfin.matrix.voluntary.Settings.*;
 
 public class Matrix implements com.delfin.matrix.Matrix {
 
@@ -68,9 +69,9 @@ public class Matrix implements com.delfin.matrix.Matrix {
 						l.paint(g);
 						return null;
 					}
-				}).collect(Collectors.toList()));
+				}).collect(toList()));
 
-				if (matrix.size() > Settings.MATRIX_DEEP) {
+				if (matrix.size() > MATRIX_DEEP) {
 					matrix.removeFirst();
 				}
 				matrix.add(lines);
@@ -83,15 +84,14 @@ public class Matrix implements com.delfin.matrix.Matrix {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private static List<Line> generateLines(Dimension dim) {
 		int xLimit = dim.width;
-		return (List<Line>) Utils.time(t -> {
-		}, () -> {
-			return Arrays.asList(Settings.TOP_POSITION, Settings.MID_POSITION, Settings.BOT_POSITION).stream()
-					.flatMap(p -> Stream.generate(() -> Utils.getRandomFrom(p.range)).limit(p.lineNumbers)
+		return time(t -> {}, () -> {
+			return asList(TOP_POSITION, MID_POSITION, BOT_POSITION).stream()
+					.flatMap(p -> generate(() -> getRandomFrom(p.range))
+							.limit(p.lineNumbers)
 							.map(y -> new Line(random.nextInt(xLimit), y)))
-					.collect(Collectors.toList());
+					.collect(toList());
 		});
 	}
 

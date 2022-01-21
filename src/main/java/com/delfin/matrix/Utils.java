@@ -20,7 +20,7 @@ public class Utils {
 		}
 	}
 
-	public static Object time(Consumer<Long> logger, Supplier<?> executor) {
+	public static <T> T time(Consumer<Long> logger, Supplier<T> executor) {
 		long start = System.currentTimeMillis();
 		try {
 			return executor.get();
