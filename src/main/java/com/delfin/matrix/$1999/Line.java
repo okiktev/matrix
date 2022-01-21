@@ -15,14 +15,15 @@ import java.util.stream.Stream;
 import com.delfin.matrix.Chars;
 
 import static com.delfin.matrix.Utils.*;
-import static com.delfin.matrix.Settings.*;
 import static java.lang.System.currentTimeMillis;
 
 class Line {
 
+	private static Settings settings = Settings.getInstance();
+
 	static final List<Character> CHARS = Chars.getAll();
 	private static final Map<Integer, Color> GRADIENTS = new HashMap<>();
-	private static final int[] GRADIENT_RANGE = { 0, MATRIX_DEEP };
+	private static final int[] GRADIENT_RANGE = { 0, settings.getMatrixDeep() };
 
 	private List<Symbol> data = new ArrayList<>();
 	int x;
@@ -32,10 +33,9 @@ class Line {
 	long redrawnSpeed;
 	long drawn = currentTimeMillis();
 	long drawnSpeed;
-
+	private int matrixDeep;
 	private int stopIndex;
 	private int drawnIndx;
-
 	private int waitIdx;
 	private int waitLim;
 	private int moveSpeed;
@@ -44,11 +44,12 @@ class Line {
 	private Integer lineWidth;
 
 	Line(int x, int y) {
-		font = new Font(FONT_NAME, Font.BOLD, getRandomFrom(FONT_SIZE_RANGE));
-		redrawnSpeed = getRandomFrom(SYMBOLS_WAIT_SPEED_RANGE);
-		drawnSpeed = getRandomFrom(SYMBOLS_RUN_SPEED_RANGE);
-		waitLim = getRandomFrom(WAIT_TICKS_RANGE);
-		moveSpeed = getRandomFrom(MOVE_LENGTH_RANGE);
+		font = new Font(settings.getFontName(), Font.BOLD, getRandomFrom(settings.getFontSizeRange()));
+		redrawnSpeed = getRandomFrom(settings.getSymbolsWaitSpeedRange());
+		drawnSpeed = getRandomFrom(settings.getSymbolsRunSpeedRange());
+		waitLim = getRandomFrom(settings.getWaitTicksRange());
+		moveSpeed = getRandomFrom(settings.getMoveLengthRange());
+		matrixDeep = settings.getMatrixDeep();
 		this.x = x;
 		this.y = y;
 		generateData();
@@ -58,7 +59,7 @@ class Line {
 	private void generateData() {
 		Random random = new Random();
 		data = Stream.generate(() -> CHARS.get(random.nextInt(CHARS.size())))
-				.limit(getRandomFrom(SYMBOLS_IN_LINE_RANGE))
+				.limit(getRandomFrom(settings.getSymbolsInLineRange()))
 				.map(Symbol::new)
 				.collect(Collectors.toList());
 	}
@@ -82,7 +83,7 @@ class Line {
 					g.setColor(Color.WHITE);
 				} else {
 					int gradientIndx = getRandomFrom(GRADIENT_RANGE);
-					int gradient = (255 / MATRIX_DEEP) * (gradientIndx + 1) + 1;
+					int gradient = (255 / matrixDeep) * (gradientIndx + 1) + 1;
 
 					g.setColor(GRADIENTS.computeIfAbsent(gradient, k -> new Color(0, k, 0)));
 				}
@@ -105,7 +106,7 @@ class Line {
 				g.setColor(Color.WHITE);
 			} else {
 				int gradientIndx = getRandomFrom(GRADIENT_RANGE);
-				int gradient = (255 / MATRIX_DEEP) * (gradientIndx + 1) + 1;
+				int gradient = (255 / matrixDeep) * (gradientIndx + 1) + 1;
 
 				g.setColor(GRADIENTS.computeIfAbsent(gradient, k -> new Color(0, k, 0)));
 			}

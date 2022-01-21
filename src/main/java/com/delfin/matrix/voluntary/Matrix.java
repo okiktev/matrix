@@ -17,7 +17,6 @@ import static java.util.stream.Stream.generate;
 import static java.util.stream.Collectors.toList;
 import static java.util.Arrays.asList;
 import static com.delfin.matrix.Utils.*;
-import static com.delfin.matrix.voluntary.Settings.*;
 
 public class Matrix implements com.delfin.matrix.Matrix {
 
@@ -26,6 +25,8 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	private static LinkedList<List<Line>> matrix = new LinkedList<>();
 
 	private volatile boolean isDestroyed;
+
+	private static Settings settings = Settings.getInstance();
 
 	@Override
 	public void draw(Component canvas) {
@@ -71,7 +72,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 					}
 				}).collect(toList()));
 
-				if (matrix.size() > MATRIX_DEEP) {
+				if (matrix.size() > settings.getMatrixDeep()) {
 					matrix.removeFirst();
 				}
 				matrix.add(lines);
@@ -87,7 +88,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	private static List<Line> generateLines(Dimension dim) {
 		int xLimit = dim.width;
 		return time(t -> {}, () -> {
-			return asList(TOP_POSITION, MID_POSITION, BOT_POSITION).stream()
+			return asList(settings.getTopPosition(), settings.getMidPosition(), settings.getBotPosition()).stream()
 					.flatMap(p -> generate(() -> getRandomFrom(p.range))
 							.limit(p.lineNumbers)
 							.map(y -> new Line(random.nextInt(xLimit), y)))

@@ -1,10 +1,5 @@
 package com.delfin.matrix.$1999;
 
-import static com.delfin.matrix.Settings.BOT_POSITION;
-import static com.delfin.matrix.Settings.DRAW_BIT;
-import static com.delfin.matrix.Settings.MID_POSITION;
-import static com.delfin.matrix.Settings.TOP_POSITION;
-import static com.delfin.matrix.Settings.PAIR_RANGE;
 import static com.delfin.matrix.Utils.delay;
 import static com.delfin.matrix.Utils.getRandomFrom;
 import static com.delfin.matrix.Utils.time;
@@ -28,11 +23,15 @@ public class Matrix implements com.delfin.matrix.Matrix {
 
 	private static Random random = new Random();
 
+	private static Settings settings = Settings.getInstance();
+
 	private List<Line> matrix = new ArrayList<>();
-
 	private volatile boolean isDestroyed;
-
 	private List<Integer> xAllocations = new ArrayList<>();
+
+	private Position topPosition;
+	private Position midPosition;
+	private Position botPosition;
 
 	@Override
 	public void draw(Component canvas) {
@@ -47,6 +46,13 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		g2.fillRect(0, 0, dim.width, dim.height);
 
 		List<Line> accumulator = new ArrayList<>();
+		
+		
+		int[] pairRange = settings.getPairRange();
+		long drawBit = settings.getDrawBit();
+		topPosition = settings.getTopPosition();
+		midPosition = settings.getMidPosition();
+		botPosition = settings.getBotPosition();
 		
 		while (!isDestroyed && !Thread.interrupted()) {
 			int count = -1;
@@ -63,7 +69,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 			}
 			if (count != 0) {
 				List<Line> lines = generateLines(dim, count, g);
-				boolean doPair = getRandomFrom(PAIR_RANGE) % 3 == 0;
+				boolean doPair = getRandomFrom(pairRange) % 3 == 0;
 				if (doPair) {
 					if (lines.size() == 1 && accumulator.isEmpty()) {
 						accumulator.addAll(lines);
@@ -96,7 +102,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 				}
 				g.drawImage(img, 0, 0, canvas);
 			}
-			delay(DRAW_BIT);
+			delay(drawBit);
 		}
 	}
 
@@ -110,17 +116,17 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		}
 		List<Position> positions = new ArrayList<>();
 		if (lines == -1) {
-			positions.addAll(asList(TOP_POSITION, MID_POSITION, BOT_POSITION));
+			positions.addAll(asList(topPosition, midPosition, botPosition));
 		} else {
 			if (lines == 1) {
-				positions.addAll(asList(new Position(1, TOP_POSITION.range)));
+				positions.addAll(asList(new Position(1, topPosition.range)));
 			} else if (lines == 2) {
-				positions.addAll(asList(new Position(1, TOP_POSITION.range)
-						, new Position(1, MID_POSITION.range)));
+				positions.addAll(asList(new Position(1, topPosition.range)
+						, new Position(1, midPosition.range)));
 			} else if (lines >= 3) {
-				positions.addAll(asList(new Position(lines / 3, TOP_POSITION.range)
-						, new Position(lines / 3, MID_POSITION.range)
-						, new Position(lines / 3, BOT_POSITION.range)));
+				positions.addAll(asList(new Position(lines / 3, topPosition.range)
+						, new Position(lines / 3, midPosition.range)
+						, new Position(lines / 3, botPosition.range)));
 			}
 		}
 

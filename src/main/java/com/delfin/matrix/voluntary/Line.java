@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 import com.delfin.matrix.Chars;
 
 import static com.delfin.matrix.Utils.*;
-import static com.delfin.matrix.voluntary.Settings.*;
-import static com.delfin.matrix.Settings.FONT_NAME;
 
 class Line {
 
 	private static final List<Character> CHARS = Chars.getAll();
+
+	private static Settings settings = Settings.getInstance();
 
 	private List<Symbol> data = new ArrayList<>();
 	private int x;
@@ -25,7 +25,7 @@ class Line {
 	private Font font;
 
 	Line(int x, int y) {
-		font = new Font(FONT_NAME, Font.BOLD, getRandomFrom(FONT_SIZE_RANGE));
+		font = new Font(settings.getFontName(), Font.BOLD, getRandomFrom(settings.getFontSizeRange()));
 
 		this.x = x;
 		this.y = y;
@@ -35,13 +35,13 @@ class Line {
 	private void generateData() {
 		Random random = new Random();
 		data = Stream.generate(() -> CHARS.get(random.nextInt(CHARS.size())))
-				.limit(getRandomFrom(SYMBOLS_IN_LINE_RANGE))
+				.limit(getRandomFrom(settings.getSymbolsInLineRange()))
 				.map(Symbol::new)
 				.collect(Collectors.toList());
 	}
 
 	void paint(Graphics g) {
-		long speed = getRandomFrom(SYMBOLS_RUN_SPEED_RANGE);
+		long speed = getRandomFrom(settings.getSymbolsRunSpeedRange());
 		int offset = 0;
 		for (int i = 0; i < data.size(); ++i) {
 			synchronized (g) {
