@@ -33,8 +33,12 @@ public class Utils {
 		if (range[0] == range[1]) {
 			return range[0];
 		} else {
-			return range[0] + random.nextInt(range[1] - range[0]);
+			return range[0] + getRandomFrom(range[1] - range[0]);
 		}
+	}
+
+	public static int getRandomFrom(int range) {
+		return random.nextInt(range);
 	}
 
 }

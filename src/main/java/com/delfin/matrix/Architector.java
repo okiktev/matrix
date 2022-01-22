@@ -35,6 +35,8 @@ class Architector {
 		switch (type.toLowerCase()) {
 		case "1999":
 			return new com.delfin.matrix.$1999.Matrix();
+		case "2021":
+			return new com.delfin.matrix.$2021.Matrix();
 		case "voluntary":
 			return new com.delfin.matrix.voluntary.Matrix();
 		default:
