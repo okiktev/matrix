@@ -1,15 +1,16 @@
 released 0.0.1.1 .......................... 09Jan2022 
 imp increase chars ...done................. 09Jan2022
 imp white symbols ...done.................. 09Jan2022
-released 1.0.0.0 .......................... 10Jan2022 
+released 1.0.0.0 .......................... 10Jan2022
+imp matrix factory ........................ 20Jan2022
+imp settings .............................. 20Jan2022
 implemented matrix 1999 ................... 20Jan2022
 implemented matrix 2021 ................... 22Jan2022
 
+
 imp screen saver
 imp yelow matrix
-imp matrix factory
 imp avoid tick-tack raining
-imp settings
 imp system tray
 imp matrix has you screen
 imp find alternative font
