@@ -1,19 +1,26 @@
-package com.delfin.matrix;
+package com.delfin.matrix.settings;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.delfin.matrix.Matrix;
+import com.delfin.matrix.MatrixException;
+
 public abstract class Settings {
 
 	private static final Logger log = Logger.getLogger("settings");
+	private static final String CFG_FILE_NAME = "matrix.conf";
+	private static final ClassLoader CLASS_LOADER = Settings.class.getClassLoader();
 
 	protected static Properties properties = new Properties();
 
@@ -26,14 +33,17 @@ public abstract class Settings {
 	protected Position midPosition;
 	protected Position botPosition;
 
+	protected static volatile boolean doReload;
+
+	public Properties getProperties() {
+		return properties;
+	}
+
 	protected void load() {
-
-		ClassLoader cl = Settings.class.getClassLoader();
-		InputStream is = null;
 		try {
-			loadProperties(is, cl);
+			loadProperties();
 
-			initFontName(cl);
+			initFontName();
 			initFontSizeRange();
 			initSymbolsInLineRange();
 			initSymbolsRunSpeedRange();
@@ -42,37 +52,67 @@ public abstract class Settings {
 			initMidPosition();
 			initBotPosition();
 
+			doReload = false;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable load settings", e);
 			throw new MatrixException(e);
+		}
+	}
+
+	@SuppressWarnings("resource")
+	protected void loadProperties() throws IOException {
+		if (!properties.isEmpty()) {
+			return;
+		}
+		InputStream is;
+		try {
+			log.info("Loading properties from local");
+			is = new FileInputStream(CFG_FILE_NAME);
+		} catch (FileNotFoundException e) {
+			log.log(Level.WARNING, "Unable to load config from local. Loading defaults...");
+			is = CLASS_LOADER.getResourceAsStream(CFG_FILE_NAME);
+		}
+		try {
+			properties.load(is);
 		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					log.log(Level.WARNING, "Unable to close stream", e);
-				}
+			try {
+				is.close();
+			} catch (IOException e) {
+				log.log(Level.WARNING, "Unable to close stream to config file", e);
 			}
 		}
 	}
 
-	protected void loadProperties(InputStream is, ClassLoader cl) throws IOException {
-		if (!properties.isEmpty()) {
-			return;
+	static void loadDefaults() throws IOException {
+		properties.clear();
+		properties.load(Settings.class.getClassLoader().getResourceAsStream(CFG_FILE_NAME));
+	}
+
+	static void setAndSave(Properties props) throws IOException {
+		properties.forEach((k, v) -> {
+			if (!props.keySet().contains(k)) {
+				props.put(k,  v);
+			}
+		});
+		properties.clear();
+		properties.putAll(props);
+		try (OutputStream stream = new FileOutputStream(CFG_FILE_NAME)) {			
+			properties.store(stream, "Matrix properties");
 		}
-		String cfgFile = "matrix.conf";
-		try {
-			is = new FileInputStream(cfgFile);
-			log.info("Loading properties from local");
-		} catch (FileNotFoundException e) {
-			log.log(Level.WARNING, "Unable to load config from local. Loading defaults...");
-			is = cl.getResourceAsStream(cfgFile);
-		}
-		properties.load(is);
-		try {
-			is.close();
-		} catch (IOException e) {
-			log.log(Level.WARNING, "Unable to close stream to config file", e);
+		doReload = true;
+	}
+
+	public static Matrix.Type selectedMatrix() {
+		String type = properties.getProperty("app.matrix.type");
+		switch (type.toLowerCase()) {
+		case "1999":
+			return Matrix.Type.$1999;
+		case "2021":
+			return Matrix.Type.$2021;
+		case "voluntary":
+			return Matrix.Type.VOLUNTARY;
+		default:
+			throw new MatrixException("Architector didn't create matrix [" + type + "] yet");
 		}
 	}
 
@@ -108,9 +148,9 @@ public abstract class Settings {
 		return botPosition;
 	}
 
-	private void initFontName(ClassLoader cl) throws FontFormatException, IOException {
+	private void initFontName() throws FontFormatException, IOException {
 		fontName = getProperty("font.name");
-		InputStream is = cl.getResourceAsStream("fonts/" + fontName + ".ttf");
+		InputStream is = CLASS_LOADER.getResourceAsStream("fonts/" + fontName + ".ttf");
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, is));
 	}
@@ -151,18 +191,18 @@ public abstract class Settings {
 
 	protected int[] parseRange(String propValue) {
 		String[] range = propValue.trim().split(",");
-		return new int[] { Integer.parseInt(range[0]), Integer.parseInt(range[1])};
+		return new int[] { Integer.parseInt(range[0]), Integer.parseInt(range[1]) };
 	}
 
 	protected String getProperty(String propName) {
-		 String prop = properties.getProperty(getMatrixType() + '.' + propName);
-		 if (prop == null || prop.isEmpty()) {
-			 prop = properties.getProperty(propName);
-		 }
-		 if (prop == null || prop.isEmpty()) {
-			 throw new MatrixException("Unable to load property " + propName);
-		 }
-		 return prop;
+		String prop = properties.getProperty(getMatrixType() + '.' + propName);
+		if (prop == null || prop.isEmpty()) {
+			prop = properties.getProperty(propName);
+		}
+		if (prop == null || prop.isEmpty()) {
+			throw new MatrixException("Unable to load property " + propName);
+		}
+		return prop;
 	}
 
 	protected abstract String getMatrixType();

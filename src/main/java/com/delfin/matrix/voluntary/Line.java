@@ -17,7 +17,7 @@ class Line {
 
 	private static final List<Character> CHARS = Chars.getAll();
 
-	private static Settings settings = Settings.getInstance();
+	private Settings settings = Settings.getInstance();
 
 	private List<Symbol> data = new ArrayList<>();
 	private int x;
@@ -77,10 +77,10 @@ class Line {
 	private static class Symbol {
 		Character ch;
 		int offset;
+
 		Symbol(Character ch) {
 			this.ch = ch;
 		}
 	}
 
 }
-

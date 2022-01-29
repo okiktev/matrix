@@ -10,11 +10,15 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 
-class Window extends Frame {
+import com.delfin.matrix.settings.SettingsDlg;
+
+public class Window extends Frame {
 
 	private static final long serialVersionUID = -7178781859217422891L;
 
@@ -54,6 +58,24 @@ class Window extends Frame {
 			}
 		});
 
+		addKeyListener(new KeyListener() {
+			@Override
+		    public void keyPressed(KeyEvent e) {
+			    if(e.getKeyCode() == KeyEvent.VK_F12) {
+			    	new SettingsDlg(Window.this);
+			    }
+		    }
+			@Override
+		    public void keyReleased(KeyEvent e) {
+		    	
+		    }
+			@Override
+		    public void keyTyped(KeyEvent e) {
+		    	
+		    }
+		});
+		
+
 		URL u = Main.class.getClassLoader().getResource("icons/matrix.png");
 		Image icon = Toolkit.getDefaultToolkit().getImage(u);
 		setIconImage(icon);
@@ -64,6 +86,10 @@ class Window extends Frame {
 		setPreferredSize(new Dimension(500, 500));
 
 		pack();
+	}
+
+	public void doRedraw() {
+		doRedraw = true;
 	}
 
 	public void draw() {

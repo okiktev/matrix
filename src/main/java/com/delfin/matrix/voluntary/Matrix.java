@@ -7,11 +7,14 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static java.util.stream.Stream.generate;
 import static java.util.stream.Collectors.toList;
@@ -20,23 +23,27 @@ import static com.delfin.matrix.Utils.*;
 
 public class Matrix implements com.delfin.matrix.Matrix {
 
+	private static final Logger log = Logger.getLogger("voluntary_matrix");
+
 	private static Random random = new Random();
 
 	private static LinkedList<List<Line>> matrix = new LinkedList<>();
 
 	private volatile boolean isDestroyed;
 
-	private static Settings settings = Settings.getInstance();
+	private static Settings settings;
 
 	@Override
 	public void draw(Component canvas) {
+		settings = Settings.getInstance();
+
 		Graphics g = canvas.getGraphics();
 
 		Dimension dim = canvas.getSize();
 
 		Image img = canvas.createImage(dim.width, dim.height);
 		Graphics g2 = img.getGraphics();
-
+		
 		ExecutorService executor = Executors.newCachedThreadPool();
 
 		try {
@@ -78,14 +85,16 @@ public class Matrix implements com.delfin.matrix.Matrix {
 				matrix.add(lines);
 			}
 		} catch (Exception e) {
-			e.printStackTrace(System.err);
+			if (e instanceof InterruptedException) {
+				log.log(Level.WARNING, "Thread was interrupted");
+			} else {
+				log.log(Level.SEVERE, "Unexpected error occurred while drawing matrix");				
+			}
 		}
-
 		executor.shutdown();
-
 	}
 
-	private static List<Line> generateLines(Dimension dim) {
+	private List<Line> generateLines(Dimension dim) {
 		int xLimit = dim.width;
 		return time(t -> {}, () -> {
 			return asList(settings.getTopPosition(), settings.getMidPosition(), settings.getBotPosition()).stream()
@@ -99,6 +108,15 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	@Override
 	public void destroy() {
 		isDestroyed = true;
+		matrix.clear();
+	}
+
+	public static Properties settings(Properties properties) {
+		Settings settings = Settings.getInstance();
+		if (properties != null) {
+			settings.getProperties().putAll(properties);
+		}
+		return settings.getProperties();
 	}
 
 }

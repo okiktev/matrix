@@ -1,5 +1,6 @@
 package com.delfin.matrix;
 
+
 public class MatrixException extends RuntimeException {
 
 	private static final long serialVersionUID = 6617394309340954985L;
@@ -10,6 +11,10 @@ public class MatrixException extends RuntimeException {
 
 	public MatrixException(String message) {
 		super(message);
+	}
+
+	public MatrixException(String message, Throwable cause) {
+		super(message, cause);
 	}
 
 }

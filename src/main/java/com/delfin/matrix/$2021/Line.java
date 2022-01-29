@@ -18,7 +18,7 @@ import static java.lang.System.currentTimeMillis;
 
 class Line {
 
-	private static Settings settings = Settings.getInstance();
+	private Settings settings = Settings.getInstance();
 
 	private static final List<String> CHARS;
 	static {
@@ -31,7 +31,6 @@ class Line {
 	private int y;
 	private Font font;
 	long redrawn = currentTimeMillis();
-	long redrawnSpeed;
 	long drawn = currentTimeMillis();
 	long drawnSpeed;
 	private int matrixDeep;
@@ -40,7 +39,6 @@ class Line {
 
 	Line(int x, int y) {
 		font = new Font(settings.getFontName(), Font.BOLD, getRandomFrom(settings.getFontSizeRange()));
-		redrawnSpeed = getRandomFrom(settings.getSymbolsWaitSpeedRange());
 		drawnSpeed = getRandomFrom(settings.getSymbolsRunSpeedRange());
 		matrixDeep = settings.getMatrixDeep();
 		this.x = x;

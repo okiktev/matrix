@@ -19,11 +19,11 @@ import static java.lang.System.currentTimeMillis;
 
 class Line {
 
-	private static Settings settings = Settings.getInstance();
+	private Settings settings = Settings.getInstance();
 
 	static final List<Character> CHARS = Chars.getAll();
 	private static final Map<Integer, Color> GRADIENTS = new HashMap<>();
-	private static final int[] GRADIENT_RANGE = { 0, settings.getMatrixDeep() };
+	private static int[] GRADIENT_RANGE;
 
 	private List<Symbol> data = new ArrayList<>();
 	int x;
@@ -44,6 +44,10 @@ class Line {
 	private Integer lineWidth;
 
 	Line(int x, int y) {
+		if (GRADIENT_RANGE == null) {
+			GRADIENT_RANGE = new int[] { 0, settings.getMatrixDeep() };
+		}
+
 		font = new Font(settings.getFontName(), Font.BOLD, getRandomFrom(settings.getFontSizeRange()));
 		redrawnSpeed = getRandomFrom(settings.getSymbolsWaitSpeedRange());
 		drawnSpeed = getRandomFrom(settings.getSymbolsRunSpeedRange());

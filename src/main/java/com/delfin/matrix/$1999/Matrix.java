@@ -13,17 +13,16 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.delfin.matrix.Settings.Position;
+import com.delfin.matrix.settings.Settings.Position;
 
 public class Matrix implements com.delfin.matrix.Matrix {
 
 	private static Random random = new Random();
-
-	private static Settings settings = Settings.getInstance();
 
 	private List<Line> matrix = new ArrayList<>();
 	private volatile boolean isDestroyed;
@@ -35,6 +34,8 @@ public class Matrix implements com.delfin.matrix.Matrix {
 
 	@Override
 	public void draw(Component canvas) {
+		Settings settings = Settings.getInstance();
+
 		Graphics g = canvas.getGraphics();
 		
 		Dimension dim = canvas.getSize();
@@ -146,6 +147,14 @@ public class Matrix implements com.delfin.matrix.Matrix {
 	@Override
 	public void destroy() {
 		isDestroyed = true;
+	}
+
+	public static Properties settings(Properties properties) {
+		Settings settings = Settings.getInstance();
+		if (properties != null) {
+			settings.getProperties().putAll(properties);
+		}
+		return settings.getProperties();
 	}
 
 }

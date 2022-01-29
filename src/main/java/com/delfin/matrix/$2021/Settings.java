@@ -1,13 +1,17 @@
 package com.delfin.matrix.$2021;
 
-class Settings extends com.delfin.matrix.Settings {
+import com.delfin.matrix.Matrix.Type;
 
-	private int[] symbolsWaitSpeedRange;
+class Settings extends com.delfin.matrix.settings.Settings {
+
 	private long drawBit;
 
 	private static Settings instance;
 
 	static Settings getInstance() {
+		if (com.delfin.matrix.settings.Settings.doReload) {
+			instance = null;
+		}
 		if (instance == null) {
 			init();
 		}
@@ -20,7 +24,7 @@ class Settings extends com.delfin.matrix.Settings {
 		}
 	}
 
-	protected Settings() {
+	private Settings() {
 		load();
 	}
 
@@ -28,12 +32,7 @@ class Settings extends com.delfin.matrix.Settings {
 	protected void load() {
 		super.load();
 
-		initSymbolsWaitSpeedRange();
 		initDrawBit();
-	}
-
-	int[] getSymbolsWaitSpeedRange() {
-		return symbolsWaitSpeedRange;
 	}
 
 	long getDrawBit() {
@@ -42,11 +41,7 @@ class Settings extends com.delfin.matrix.Settings {
 
 	@Override
 	protected String getMatrixType() {
-		return "2021";
-	}
-
-	private void initSymbolsWaitSpeedRange() {
-		symbolsWaitSpeedRange = parseRange(getProperty("symbols.wait.speed.range"));
+		return Type.$2021.toString();
 	}
 
 	private void initDrawBit() {

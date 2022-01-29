@@ -7,7 +7,7 @@ build/
 target/
 lib/
 src/**/Test*java
-src/delfin/matrix/test/**
+src/main/java/com/delfin/matrix/test/**
 
 
 # Windows image file caches

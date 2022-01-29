@@ -13,17 +13,16 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.delfin.matrix.Settings.Position;
+import com.delfin.matrix.settings.Settings.Position;
 
 public class Matrix implements com.delfin.matrix.Matrix {
 
 	private static Random random = new Random();
-
-	private static Settings settings = Settings.getInstance();
 
 	private List<Line> matrix = new ArrayList<>();
 	private volatile boolean isDestroyed;
@@ -35,13 +34,15 @@ public class Matrix implements com.delfin.matrix.Matrix {
 
 	@Override
 	public void draw(Component canvas) {
+		Settings settings = Settings.getInstance();
+
 		Graphics g = canvas.getGraphics();
-		
+
 		Dimension dim = canvas.getSize();
-		
+
 		Image img = canvas.createImage(dim.width, dim.height);
 		Graphics g2 = img.getGraphics();
-		
+
 		g2.setColor(Color.BLACK);
 		g2.fillRect(0, 0, dim.width, dim.height);
 
@@ -49,7 +50,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		topPosition = settings.getTopPosition();
 		midPosition = settings.getMidPosition();
 		botPosition = settings.getBotPosition();
-		
+
 		while (!isDestroyed && !Thread.interrupted()) {
 			int count = -1;
 			if (matrix.size() > 0) {
@@ -72,7 +73,7 @@ public class Matrix implements com.delfin.matrix.Matrix {
 				Line line = matrix.get(i);
 
 				long now = System.currentTimeMillis();
-				if (now - line.redrawn > line.redrawnSpeed || now - line.drawn > line.drawnSpeed) {
+				if (now - line.drawn > line.drawnSpeed) {
 					redraw = true;
 					break;
 				}
@@ -102,31 +103,35 @@ public class Matrix implements com.delfin.matrix.Matrix {
 			if (lines == 1) {
 				positions.addAll(asList(new Position(1, topPosition.range)));
 			} else if (lines == 2) {
-				positions.addAll(asList(new Position(1, topPosition.range)
-						, new Position(1, midPosition.range)));
+				positions.addAll(asList(new Position(1, topPosition.range), new Position(1, midPosition.range)));
 			} else if (lines >= 3) {
-				positions.addAll(asList(new Position(lines / 3, topPosition.range)
-						, new Position(lines / 3, midPosition.range)
-						, new Position(lines / 3, botPosition.range)));
+				positions.addAll(asList(new Position(lines / 3, topPosition.range),
+						new Position(lines / 3, midPosition.range), new Position(lines / 3, botPosition.range)));
 			}
 		}
 
-		return time(t -> {}, () -> {
+		return time(t -> {
+		}, () -> {
 			return positions.stream()
-					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range))
-							.limit(p.lineNumbers)
-							.map(y -> {
-								Line line = new Line(random.nextInt(xLimit), y);
-								line.allocate(xAllocations, g);
-								return line;
-							}))
-					.collect(Collectors.toList());
+					.flatMap(p -> Stream.generate(() -> getRandomFrom(p.range)).limit(p.lineNumbers).map(y -> {
+						Line line = new Line(random.nextInt(xLimit), y);
+						line.allocate(xAllocations, g);
+						return line;
+					})).collect(Collectors.toList());
 		});
 	}
 
 	@Override
 	public void destroy() {
 		isDestroyed = true;
+	}
+
+	public static Properties settings(Properties properties) {
+		Settings settings = Settings.getInstance();
+		if (properties != null) {
+			settings.getProperties().putAll(properties);
+		}
+		return settings.getProperties();
 	}
 
 }

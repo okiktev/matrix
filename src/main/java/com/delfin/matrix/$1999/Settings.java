@@ -1,6 +1,8 @@
 package com.delfin.matrix.$1999;
 
-class Settings extends com.delfin.matrix.Settings {
+import com.delfin.matrix.Matrix.Type;
+
+class Settings extends com.delfin.matrix.settings.Settings {
 
 	private int[] symbolsWaitSpeedRange;
 	private int[] waitTicksRange;
@@ -11,6 +13,9 @@ class Settings extends com.delfin.matrix.Settings {
 	private static Settings instance;
 
 	static Settings getInstance() {
+		if (com.delfin.matrix.settings.Settings.doReload) {
+			instance = null;
+		}
 		if (instance == null) {
 			init();
 		}
@@ -23,7 +28,7 @@ class Settings extends com.delfin.matrix.Settings {
 		}
 	}
 
-	protected Settings() {
+	private Settings() {
 		load();
 	}
 
@@ -61,7 +66,7 @@ class Settings extends com.delfin.matrix.Settings {
 
 	@Override
 	protected String getMatrixType() {
-		return "1999";
+		return Type.$1999.toString();
 	}
 
 	private void initSymbolsWaitSpeedRange() {

@@ -1,10 +1,15 @@
 package com.delfin.matrix.voluntary;
 
-class Settings extends com.delfin.matrix.Settings {
+import com.delfin.matrix.Matrix.Type;
+
+class Settings extends com.delfin.matrix.settings.Settings {
 
 	private static Settings instance;
 
-	public static Settings getInstance() {
+	static Settings getInstance() {
+		if (com.delfin.matrix.settings.Settings.doReload) {
+			instance = null;
+		}
 		if (instance == null) {
 			init();
 		}
@@ -17,9 +22,13 @@ class Settings extends com.delfin.matrix.Settings {
 		}
 	}
 
+	private Settings() {
+		super.load();
+	}
+
 	@Override
 	protected String getMatrixType() {
-		return "voluntary";
+		return Type.VOLUNTARY.toString();
 	}
 
 }
