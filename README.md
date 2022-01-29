@@ -3,6 +3,9 @@
 <p>Simulates matrix code</p> 
 
 <img src="https://raw.githubusercontent.com/okiktev/matrix/main/matrix.png">
+<img src="https://raw.githubusercontent.com/okiktev/matrix/main/matrix1999.png">
+<img src="https://raw.githubusercontent.com/okiktev/matrix/main/matrix2021.png">
+<img src="https://raw.githubusercontent.com/okiktev/matrix/main/matrix.settings.png">
 
 
 ## to run matrix
