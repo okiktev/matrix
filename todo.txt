@@ -7,7 +7,7 @@ imp settings .............................. 20Jan2022
 implemented matrix 1999 ................... 20Jan2022
 implemented matrix 2021 ................... 22Jan2022
 implemented settings management ........... 29Jan2022
-
+released 2.0.0.0 .......................... 29Jan2022
 
 
 imp snapshot image to file
