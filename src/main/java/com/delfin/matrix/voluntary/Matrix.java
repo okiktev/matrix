@@ -16,6 +16,8 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.delfin.matrix.HasYouScreen;
+
 import static java.util.stream.Stream.generate;
 import static java.util.stream.Collectors.toList;
 import static java.util.Arrays.asList;
@@ -43,8 +45,9 @@ public class Matrix implements com.delfin.matrix.Matrix {
 
 		Image img = canvas.createImage(dim.width, dim.height);
 		Graphics g2 = img.getGraphics();
-		
+
 		ExecutorService executor = Executors.newCachedThreadPool();
+		long matrixHasYouTime = System.currentTimeMillis();
 
 		try {
 			while (!isDestroyed && !Thread.interrupted()) {
@@ -83,6 +86,13 @@ public class Matrix implements com.delfin.matrix.Matrix {
 					matrix.removeFirst();
 				}
 				matrix.add(lines);
+
+				if (settings.isShowMatrixHasYouScreen() && System.currentTimeMillis() - matrixHasYouTime > 60_000) {
+					HasYouScreen.draw(g, dim);
+					matrix.clear();
+					matrixHasYouTime = System.currentTimeMillis();
+				}
+
 			}
 		} catch (Exception e) {
 			if (e instanceof InterruptedException) {

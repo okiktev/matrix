@@ -18,6 +18,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.delfin.matrix.HasYouScreen;
 import com.delfin.matrix.settings.Settings.Position;
 
 public class Matrix implements com.delfin.matrix.Matrix {
@@ -51,6 +52,8 @@ public class Matrix implements com.delfin.matrix.Matrix {
 		midPosition = settings.getMidPosition();
 		botPosition = settings.getBotPosition();
 
+		long matrixHasYouTime = System.currentTimeMillis();
+
 		while (!isDestroyed && !Thread.interrupted()) {
 			int count = -1;
 			if (matrix.size() > 0) {
@@ -83,6 +86,14 @@ public class Matrix implements com.delfin.matrix.Matrix {
 					matrix.get(i).draw(g2);
 				}
 				g.drawImage(img, 0, 0, canvas);
+				if (settings.isShowMatrixHasYouScreen() && System.currentTimeMillis() - matrixHasYouTime > 60_000) {
+					HasYouScreen.draw(g, dim);
+					matrix.clear();
+					xAllocations.clear();
+					matrixHasYouTime = System.currentTimeMillis();
+					g2.setColor(Color.BLACK);
+					g2.fillRect(0, 0, dim.width, dim.height);
+				}
 			}
 			delay(drawBit);
 		}

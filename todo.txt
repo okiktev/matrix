@@ -8,6 +8,7 @@ implemented matrix 1999 ................... 20Jan2022
 implemented matrix 2021 ................... 22Jan2022
 implemented settings management ........... 29Jan2022
 released 2.0.0.0 .......................... 29Jan2022
+imp matrix has you screen ................. 02Apr2022
 
 
 imp snapshot image to file
@@ -15,5 +16,4 @@ imp screen saver
 imp yelow matrix
 imp avoid tick-tack raining
 imp system tray
-imp matrix has you screen
 imp find alternative font

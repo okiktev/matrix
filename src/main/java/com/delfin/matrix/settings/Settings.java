@@ -32,6 +32,7 @@ public abstract class Settings {
 	protected Position topPosition;
 	protected Position midPosition;
 	protected Position botPosition;
+	private boolean isShowMatrixHasYouScreen;
 
 	protected static volatile boolean doReload;
 
@@ -51,6 +52,7 @@ public abstract class Settings {
 			initTopPosition();
 			initMidPosition();
 			initBotPosition();
+			initShowMatrixHasYouScreen();
 
 			doReload = false;
 		} catch (Exception e) {
@@ -148,6 +150,10 @@ public abstract class Settings {
 		return botPosition;
 	}
 
+	public boolean isShowMatrixHasYouScreen() {
+		return isShowMatrixHasYouScreen;
+	}
+
 	private void initFontName() throws FontFormatException, IOException {
 		fontName = getProperty("font.name");
 		InputStream is = CLASS_LOADER.getResourceAsStream("fonts/" + fontName + ".ttf");
@@ -187,6 +193,11 @@ public abstract class Settings {
 		String propValue = getProperty("bot.position");
 		String[] position = propValue.split(";");
 		botPosition = new Position(Integer.parseInt(position[0]), parseRange(position[1]));
+	}
+
+	private void initShowMatrixHasYouScreen() {
+		String propValue = getProperty("show.matrix.has.you");
+		isShowMatrixHasYouScreen = Boolean.parseBoolean(propValue);
 	}
 
 	protected int[] parseRange(String propValue) {
