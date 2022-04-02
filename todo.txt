@@ -9,6 +9,7 @@ implemented matrix 2021 ................... 22Jan2022
 implemented settings management ........... 29Jan2022
 released 2.0.0.0 .......................... 29Jan2022
 imp matrix has you screen ................. 02Apr2022
+released 2.0.0.1 .......................... 02Apr2022
 
 
 imp snapshot image to file
